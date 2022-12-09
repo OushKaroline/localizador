@@ -1,0 +1,39 @@
+import './style.css'
+import '@picocss/pico'
+const perfilLocalizar = document.querySelector('#consultarPerfil')
+const inputNome = perfilLocalizar.nome // seleciona o input do a partir do formulário
+const divDados = document.querySelector('#dados')
+const btnConsultarPerfil = document.querySelector('#btnConsultarPerfil')
+
+
+perfilLocalizar.addEventListener('submit', function (event) {
+  event.preventDefault() // anula comportamento padrão de envio do form ao clicar no botão
+  ativaLoader(true)
+  localizadorPerfil(inputNome.value) // invoca a função passando o nome digitado por parâmetro
+})
+
+async function localizadorPerfil(nome) {
+  let response = await fetch(`https://api.github.com/users/${oushkakaroline}`)
+  let dadosPerfil = await response.json()
+  if (dadosPerfil.message === 'Not Found') {
+    divDados.innerHTML = `
+      <div class="erro">Usuario não encontrado!</div>
+    `
+  } else {
+    divDados.innerHTML = `
+    <img src="${dadosPerfil.avatar_url}" alt="">
+    <p> ${dadosPerfil.name}</p> 
+    <a href="${dadosPerfil.html_url}">Perfil no GitHub</a>   
+  `
+  }
+  ativaLoader(false)
+}
+
+function ativaLoader(ativo) {
+  if (ativo) {
+    divDados.setAttribute('aria-busy', 'true')
+    divDados.textContent = 'Buscando Perfil...'
+  } else {
+    divDados.removeAttribute('aria-busy')
+  }
+}
